@@ -1280,6 +1280,7 @@ func TestPackageAddGoParameterized(t *testing.T) {
 
 	containsRename := false
 	for _, r := range gomod.Replace {
+		fmt.Println(r.New.Path, r.Old.Path)
 		if r.New.Path == filepath.ToSlash("./sdks/random") &&
 			r.Old.Path == "github.com/pulumi/pulumi-terraform-provider/sdks/go/random/v3" {
 			containsRename = true

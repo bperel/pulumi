@@ -1751,7 +1751,15 @@ func TestDynamicProviderPython(t *testing.T) {
 			require.NoError(t, err)
 			if toolchain == "poetry" {
 				e.RunCommand("pulumi", "install")
-				e.RunCommand("poetry", "add", coreSDK)
+				if runtime.GOOS == "windows" {
+					// Poetry requires the sdk to be on the same device as the project on windows.  Since the
+					// tmpdir is not guaranteed to be on the same device as the project, we need to copy the
+					// sdk to the project directory.
+					e.RunCommand("cp", "-R", coreSDK, "coresdk")
+					e.RunCommand("poetry", "add", "coresdk")
+				} else {
+					e.RunCommand("poetry", "add", coreSDK)
+				}
 			} else {
 				f, err := os.OpenFile(filepath.Join(e.RootPath, "requirements.txt"), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0o644)
 				require.NoError(t, err)
